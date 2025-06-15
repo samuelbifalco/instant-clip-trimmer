@@ -1,21 +1,88 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { VideoUpload } from "@/components/VideoUpload";
 import { VideoEditor } from "@/components/VideoEditor";
 import { Header } from "@/components/Header";
+import { PrivacyBanner } from "@/components/PrivacyBanner";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { analytics } from "@/utils/analytics";
+import { initializeHealthMonitoring } from "@/utils/healthCheck";
+import { errorReporter } from "@/utils/errorReporting";
 
 const Index = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
 
+  useEffect(() => {
+    // Initialize production monitoring
+    initializeHealthMonitoring();
+    
+    // Track page visit
+    analytics.trackUserFlow('page_visit', {
+      page: 'index',
+      timestamp: Date.now()
+    });
+
+    // Set up session ID
+    if (!sessionStorage.getItem('session_id')) {
+      sessionStorage.setItem('session_id', analytics.getSessionInfo().sessionId);
+    }
+
+    // Performance monitoring
+    const startTime = performance.now();
+    
+    return () => {
+      const endTime = performance.now();
+      analytics.track({
+        event: 'page_session',
+        category: 'engagement',
+        action: 'time_on_page',
+        value: Math.round(endTime - startTime)
+      });
+    };
+  }, []);
+
   const handleVideoSelected = (file: File, url: string) => {
-    setVideoFile(file);
-    setVideoUrl(url);
+    try {
+      setVideoFile(file);
+      setVideoUrl(url);
+      
+      analytics.trackVideoEvent('video_uploaded', {
+        fileSize: file.size,
+        fileName: file.name,
+        fileType: file.type,
+        timestamp: Date.now()
+      });
+      
+      analytics.trackUserFlow('video_selection_complete');
+    } catch (error) {
+      errorReporter.reportVideoError('Failed to process selected video', {
+        fileName: file.name,
+        fileSize: file.size,
+        error: error
+      });
+    }
   };
 
   const handleReset = () => {
-    setVideoFile(null);
-    setVideoUrl("");
+    try {
+      // Clean up video URL to prevent memory leaks
+      if (videoUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(videoUrl);
+      }
+      
+      setVideoFile(null);
+      setVideoUrl("");
+      
+      analytics.trackUserFlow('video_reset');
+    } catch (error) {
+      errorReporter.reportError({
+        type: 'user',
+        message: 'Failed to reset video',
+        severity: 'low',
+        metadata: { error }
+      });
+    }
   };
 
   return (
@@ -50,9 +117,18 @@ const Index = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-gray-500 text-sm">
             <p>© 2024 ClipCut. Professional video trimming made simple.</p>
+            <p className="mt-2">
+              <a href="#privacy" className="hover:text-gray-300 transition-colors">Privacy Policy</a> • 
+              <a href="#terms" className="hover:text-gray-300 transition-colors ml-2">Terms of Service</a> • 
+              <a href="#support" className="hover:text-gray-300 transition-colors ml-2">Support</a>
+            </p>
           </div>
         </div>
       </footer>
+
+      {/* Production-ready components */}
+      <PrivacyBanner />
+      <FeedbackWidget />
     </div>
   );
 };

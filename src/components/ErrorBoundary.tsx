@@ -2,7 +2,9 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Download } from 'lucide-react';
+import { errorReporter } from '@/utils/errorReporting';
+import { analytics } from '@/utils/analytics';
 
 interface Props {
   children: ReactNode;
@@ -13,6 +15,7 @@ interface State {
   hasError: boolean;
   error?: Error;
   errorInfo?: ErrorInfo;
+  errorId?: string;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -27,8 +30,48 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error Boundary caught an error:', error, errorInfo);
-    this.setState({ error, errorInfo });
+    
+    // Report to error tracking system
+    const errorId = errorReporter.reportReactError(error, errorInfo, 'ErrorBoundary');
+    
+    // Track error in analytics
+    analytics.track({
+      event: 'react_error',
+      category: 'error',
+      action: 'error_boundary_triggered',
+      metadata: {
+        errorId,
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack
+      }
+    });
+
+    this.setState({ error, errorInfo, errorId });
   }
+
+  private handleDownloadErrorLog = () => {
+    try {
+      const errorLog = errorReporter.exportErrorLog();
+      const blob = new Blob([errorLog], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `clipcut-error-log-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      analytics.track({
+        event: 'error_log_downloaded',
+        category: 'support',
+        action: 'download_error_log'
+      });
+    } catch (error) {
+      console.error('Failed to download error log:', error);
+    }
+  };
 
   render() {
     if (this.state.hasError) {
@@ -45,15 +88,23 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="space-y-4">
                 <h2 className="text-3xl font-bold text-white">Something went wrong</h2>
                 <p className="text-red-200 text-lg">
-                  We encountered an unexpected error. This has been logged and we'll look into it.
+                  We encountered an unexpected error. This has been automatically reported and we'll look into it.
                 </p>
+                
+                {this.state.errorId && (
+                  <div className="bg-gray-800/50 p-3 rounded-lg">
+                    <p className="text-sm text-gray-300">
+                      Error ID: <code className="bg-gray-700 px-2 py-1 rounded text-green-400">{this.state.errorId}</code>
+                    </p>
+                  </div>
+                )}
                 
                 {process.env.NODE_ENV === 'development' && this.state.error && (
                   <details className="text-left bg-gray-800/50 p-4 rounded-lg">
                     <summary className="cursor-pointer text-red-300 font-semibold mb-2">
                       Error Details (Development Mode)
                     </summary>
-                    <pre className="text-sm text-gray-300 overflow-auto">
+                    <pre className="text-sm text-gray-300 overflow-auto whitespace-pre-wrap">
                       {this.state.error.toString()}
                       {this.state.errorInfo?.componentStack}
                     </pre>
@@ -77,6 +128,19 @@ export class ErrorBoundary extends Component<Props, State> {
                   <Home className="h-4 w-4 mr-2" />
                   Go Home
                 </Button>
+                <Button
+                  onClick={this.handleDownloadErrorLog}
+                  variant="outline"
+                  className="border-yellow-600 text-yellow-300 hover:bg-yellow-700/20"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Error Log
+                </Button>
+              </div>
+
+              <div className="text-xs text-gray-500 space-y-1">
+                <p>If this error persists, please contact support with the Error ID above.</p>
+                <p>You can also download the error log to help us debug the issue.</p>
               </div>
             </CardContent>
           </Card>
