@@ -1,7 +1,7 @@
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, Link, Play, Zap, Scissors, FileVideo, Star, Shield, Clock } from "lucide-react";
+import { Upload, Link, Play, Zap, Scissors, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -213,7 +213,7 @@ export const VideoUpload = ({ onVideoSelected }: VideoUploadProps) => {
             
             <div className="text-center space-y-4">
               <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                <Shield className="h-8 w-8 text-blue-400" />
+                <Scissors className="h-8 w-8 text-blue-400" />
               </div>
               <h4 className="font-semibold text-white text-lg">100% Private</h4>
               <p className="text-gray-400 leading-relaxed">
@@ -248,7 +248,7 @@ export const VideoUpload = ({ onVideoSelected }: VideoUploadProps) => {
             <div className="text-gray-400">Uptime</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-purple-400">< 5s</div>
+            <div className="text-3xl font-bold text-purple-400">&lt; 5s</div>
             <div className="text-gray-400">Avg. Process Time</div>
           </div>
           <div>
