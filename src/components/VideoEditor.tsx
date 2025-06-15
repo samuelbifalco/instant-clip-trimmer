@@ -2,9 +2,24 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { VideoControls } from "@/components/VideoControls";
-import { ExportPanel } from "@/components/ExportPanel";
-import { ArrowLeft, Download } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Play, 
+  Pause, 
+  SkipBack, 
+  SkipForward, 
+  Scissors, 
+  Download, 
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Maximize,
+  ArrowLeft
+} from "lucide-react";
+import { VideoControls } from "./VideoControls";
+import { ExportPanel } from "./ExportPanel";
+import { toast } from "@/hooks/use-toast";
 
 interface VideoEditorProps {
   videoFile: File;
@@ -14,11 +29,14 @@ interface VideoEditorProps {
 
 export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [trimStart, setTrimStart] = useState(0);
+  const [trimEnd, setTrimEnd] = useState(0);
+  const [volume, setVolume] = useState(100);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [showExportPanel, setShowExportPanel] = useState(false);
 
   useEffect(() => {
@@ -26,22 +44,117 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
     if (video) {
       const handleLoadedMetadata = () => {
         setDuration(video.duration);
-        setEndTime(video.duration);
+        setTrimEnd(video.duration);
       };
 
       const handleTimeUpdate = () => {
         setCurrentTime(video.currentTime);
       };
 
+      const handleEnded = () => {
+        setIsPlaying(false);
+        if (video.currentTime >= trimEnd) {
+          video.currentTime = trimStart;
+        }
+      };
+
       video.addEventListener('loadedmetadata', handleLoadedMetadata);
       video.addEventListener('timeupdate', handleTimeUpdate);
+      video.addEventListener('ended', handleEnded);
 
       return () => {
         video.removeEventListener('loadedmetadata', handleLoadedMetadata);
         video.removeEventListener('timeupdate', handleTimeUpdate);
+        video.removeEventListener('ended', handleEnded);
       };
     }
-  }, []);
+  }, [trimStart, trimEnd]);
+
+  const togglePlayPause = () => {
+    const video = videoRef.current;
+    if (video) {
+      if (isPlaying) {
+        video.pause();
+      } else {
+        video.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleSeek = (value: number[]) => {
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = value[0];
+      setCurrentTime(value[0]);
+    }
+  };
+
+  const handleTrimStartChange = (value: number[]) => {
+    const newStart = value[0];
+    setTrimStart(newStart);
+    if (currentTime < newStart) {
+      const video = videoRef.current;
+      if (video) {
+        video.currentTime = newStart;
+      }
+    }
+  };
+
+  const handleTrimEndChange = (value: number[]) => {
+    const newEnd = value[0];
+    setTrimEnd(newEnd);
+    if (currentTime > newEnd) {
+      const video = videoRef.current;
+      if (video) {
+        video.currentTime = newEnd;
+      }
+    }
+  };
+
+  const handleVolumeChange = (value: number[]) => {
+    const video = videoRef.current;
+    const newVolume = value[0];
+    setVolume(newVolume);
+    if (video) {
+      video.volume = newVolume / 100;
+    }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const skipBackward = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = Math.max(trimStart, video.currentTime - 10);
+    }
+  };
+
+  const skipForward = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = Math.min(trimEnd, video.currentTime + 10);
+    }
+  };
+
+  const toggleFullscreen = () => {
+    const video = videoRef.current;
+    if (video) {
+      if (!isFullscreen) {
+        video.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  };
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -49,20 +162,16 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleStartTimeChange = (value: number[]) => {
-    const newStart = value[0];
-    setStartTime(newStart);
-    if (newStart >= endTime) {
-      setEndTime(Math.min(newStart + 1, duration));
-    }
+  const getTrimmedDuration = () => {
+    return trimEnd - trimStart;
   };
 
-  const handleEndTimeChange = (value: number[]) => {
-    const newEnd = value[0];
-    setEndTime(newEnd);
-    if (newEnd <= startTime) {
-      setStartTime(Math.max(newEnd - 1, 0));
-    }
+  const handleExport = () => {
+    setShowExportPanel(true);
+    toast({
+      title: "Preparing export...",
+      description: "Setting up your trimmed video for download.",
+    });
   };
 
   return (
@@ -70,129 +179,194 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
       {/* Header */}
       <div className="flex items-center justify-between">
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={onReset}
-          className="border-gray-600 text-gray-300 hover:bg-gray-700"
+          className="text-gray-300 hover:text-white"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Upload
         </Button>
-        <Button
-          onClick={() => setShowExportPanel(true)}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-        >
-          <Download className="mr-2 h-4 w-4" />
-          Export Video
-        </Button>
+        
+        <div className="flex items-center space-x-4">
+          <Badge variant="secondary" className="bg-blue-500/20 text-blue-300">
+            Original: {formatTime(duration)}
+          </Badge>
+          <Badge variant="secondary" className="bg-green-500/20 text-green-300">
+            Trimmed: {formatTime(getTrimmedDuration())}
+          </Badge>
+        </div>
       </div>
 
       {/* Video Player */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="aspect-video bg-black rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-          <video
-            ref={videoRef}
-            src={videoUrl}
-            className="max-w-full max-h-full"
-            controls={false}
-          />
-        </div>
-        
-        <VideoControls
-          videoRef={videoRef}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
-          currentTime={currentTime}
-          duration={duration}
-        />
-      </div>
-
-      {/* Timeline Editor */}
-      <div className="bg-gray-800 rounded-lg p-6 space-y-6">
-        <h3 className="text-xl font-semibold">Timeline Editor</h3>
-        
-        {/* Main Timeline */}
-        <div className="space-y-4">
-          <div className="relative">
-            <div className="h-16 bg-gray-700 rounded relative overflow-hidden">
-              {/* Video thumbnail strip would go here in full implementation */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20" />
-              
-              {/* Trim indicators */}
-              <div 
-                className="absolute top-0 bottom-0 bg-blue-500/50 border-l-2 border-blue-400"
-                style={{ left: `${(startTime / duration) * 100}%` }}
-              />
-              <div 
-                className="absolute top-0 bottom-0 bg-blue-500/50 border-r-2 border-blue-400"
-                style={{ left: `${(endTime / duration) * 100}%` }}
-              />
-              
-              {/* Current time indicator */}
-              <div 
-                className="absolute top-0 bottom-0 w-0.5 bg-white"
-                style={{ left: `${(currentTime / duration) * 100}%` }}
-              />
+      <Card className="bg-gray-800 border-gray-700 overflow-hidden">
+        <CardContent className="p-0">
+          <div className="relative bg-black rounded-lg overflow-hidden">
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              className="w-full max-h-[60vh] object-contain"
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+            />
+            
+            {/* Video Overlay Controls */}
+            <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={togglePlayPause}
+                className="bg-black/50 text-white hover:bg-black/70 w-16 h-16 rounded-full"
+              >
+                {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+              </Button>
             </div>
+            
+            {/* Fullscreen button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleFullscreen}
+              className="absolute top-4 right-4 bg-black/50 text-white hover:bg-black/70"
+            >
+              <Maximize className="h-4 w-4" />
+            </Button>
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Time markers */}
-          <div className="flex justify-between text-xs text-gray-400">
-            <span>0:00</span>
-            <span>{formatTime(duration)}</span>
-          </div>
-        </div>
-
-        {/* Trim Controls */}
-        <div className="grid md:grid-cols-2 gap-6">
+      {/* Timeline and Controls */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardContent className="p-6 space-y-6">
+          {/* Main Timeline */}
           <div className="space-y-3">
-            <label className="text-sm font-medium">Start Time: {formatTime(startTime)}</label>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-300">Playhead</span>
+              <span className="text-sm text-gray-400">{formatTime(currentTime)}</span>
+            </div>
             <Slider
-              value={[startTime]}
-              onValueChange={handleStartTimeChange}
+              value={[currentTime]}
+              onValueChange={handleSeek}
               max={duration}
               step={0.1}
               className="w-full"
             />
           </div>
-          <div className="space-y-3">
-            <label className="text-sm font-medium">End Time: {formatTime(endTime)}</label>
-            <Slider
-              value={[endTime]}
-              onValueChange={handleEndTimeChange}
-              max={duration}
-              step={0.1}
-              className="w-full"
-            />
-          </div>
-        </div>
 
-        {/* Trim Info */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-sm text-gray-400">Original Duration</p>
-              <p className="font-semibold">{formatTime(duration)}</p>
+          {/* Trim Controls */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-green-400">Start Time</span>
+                <span className="text-sm text-gray-400">{formatTime(trimStart)}</span>
+              </div>
+              <Slider
+                value={[trimStart]}
+                onValueChange={handleTrimStartChange}
+                max={trimEnd - 0.1}
+                step={0.1}
+                className="w-full"
+              />
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Trimmed Duration</p>
-              <p className="font-semibold text-blue-400">{formatTime(endTime - startTime)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Size Reduction</p>
-              <p className="font-semibold text-green-400">
-                {Math.round(((duration - (endTime - startTime)) / duration) * 100)}%
-              </p>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-red-400">End Time</span>
+                <span className="text-sm text-gray-400">{formatTime(trimEnd)}</span>
+              </div>
+              <Slider
+                value={[trimEnd]}
+                onValueChange={handleTrimEndChange}
+                min={trimStart + 0.1}
+                max={duration}
+                step={0.1}
+                className="w-full"
+              />
             </div>
           </div>
-        </div>
+
+          {/* Playback Controls */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={skipBackward}
+                className="text-gray-300 hover:text-white"
+              >
+                <SkipBack className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={togglePlayPause}
+                className="text-gray-300 hover:text-white"
+              >
+                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={skipForward}
+                className="text-gray-300 hover:text-white"
+              >
+                <SkipForward className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleMute}
+                className="text-gray-300 hover:text-white"
+              >
+                {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </Button>
+              <Slider
+                value={[volume]}
+                onValueChange={handleVolumeChange}
+                max={100}
+                step={1}
+                className="w-20"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button
+          onClick={() => {
+            setTrimStart(0);
+            setTrimEnd(duration);
+            toast({
+              title: "Reset successful!",
+              description: "Trim points have been reset to full video length.",
+            });
+          }}
+          variant="outline"
+          className="border-gray-600 text-gray-300 hover:bg-gray-700"
+        >
+          <RotateCcw className="h-4 w-4 mr-2" />
+          Reset Trim
+        </Button>
+        
+        <Button
+          onClick={handleExport}
+          className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold px-8"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Export Trimmed Video
+        </Button>
       </div>
 
       {/* Export Panel */}
       {showExportPanel && (
-        <ExportPanel
-          startTime={startTime}
-          endTime={endTime}
+        <ExportPanel 
           videoFile={videoFile}
+          trimStart={trimStart}
+          trimEnd={trimEnd}
           onClose={() => setShowExportPanel(false)}
         />
       )}
