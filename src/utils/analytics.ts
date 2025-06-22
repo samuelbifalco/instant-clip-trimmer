@@ -18,6 +18,11 @@ interface UserSession {
   timezone: string;
 }
 
+// Type declaration for gtag function
+declare global {
+  function gtag(...args: any[]): void;
+}
+
 class Analytics {
   private session: UserSession;
   private events: AnalyticsEvent[] = [];
@@ -186,13 +191,17 @@ class Analytics {
   private sendToAnalyticsService(event: any) {
     // In production, send to your analytics service
     // Example: Google Analytics, Mixpanel, etc.
-    if (typeof gtag !== 'undefined') {
-      gtag('event', event.action, {
-        event_category: event.category,
-        event_label: event.label,
-        value: event.value,
-        custom_map: event.metadata
-      });
+    if (typeof window !== 'undefined' && 'gtag' in window && typeof (window as any).gtag === 'function') {
+      try {
+        (window as any).gtag('event', event.action, {
+          event_category: event.category,
+          event_label: event.label,
+          value: event.value,
+          custom_map: event.metadata
+        });
+      } catch (error) {
+        console.warn('[Analytics] Failed to send to gtag:', error);
+      }
     }
   }
 
