@@ -40,15 +40,26 @@ class ErrorReporter {
 
     // Unhandled Promise rejections
     window.addEventListener('unhandledrejection', (event) => {
-      this.reportError({
-        type: 'promise',
-        message: event.reason?.message || 'Unhandled promise rejection',
-        stack: event.reason?.stack,
-        severity: 'medium',
-        metadata: {
-          reason: event.reason
-        }
-      });
+      const errorMessage = event.reason?.message || 'Unhandled promise rejection';
+      const errorStack = event.reason?.stack || '';
+      
+      // Skip reporting for AdSense-related promise rejections
+      const isAdSenseError = errorStack.includes('googlesyndication.com') || 
+                            errorStack.includes('googleadservices.com') ||
+                            errorStack.includes('pagead') ||
+                            (errorMessage.includes('Failed to fetch') && errorStack.includes('adsbygoogle'));
+      
+      if (!isAdSenseError) {
+        this.reportError({
+          type: 'promise',
+          message: errorMessage,
+          stack: errorStack,
+          severity: 'medium',
+          metadata: {
+            reason: event.reason
+          }
+        });
+      }
     });
 
     // Network errors
@@ -61,7 +72,13 @@ class ErrorReporter {
       try {
         const response = await originalFetch(...args);
         
-        if (!response.ok) {
+        // Skip error reporting for AdSense and known external service failures
+        const url = args[0]?.toString() || '';
+        const isAdSenseRequest = url.includes('googlesyndication.com') || 
+                                url.includes('googleadservices.com') ||
+                                url.includes('pagead');
+        
+        if (!response.ok && !isAdSenseRequest) {
           this.reportError({
             type: 'network',
             message: `HTTP ${response.status}: ${response.statusText}`,
@@ -76,15 +93,23 @@ class ErrorReporter {
         
         return response;
       } catch (error) {
-        this.reportError({
-          type: 'network',
-          message: `Network error: ${error}`,
-          severity: 'high',
-          metadata: {
-            url: args[0],
-            error: error
-          }
-        });
+        // Skip error reporting for AdSense and known external service failures
+        const url = args[0]?.toString() || '';
+        const isAdSenseRequest = url.includes('googlesyndication.com') || 
+                                url.includes('googleadservices.com') ||
+                                url.includes('pagead');
+        
+        if (!isAdSenseRequest) {
+          this.reportError({
+            type: 'network',
+            message: `Network error: ${error}`,
+            severity: 'high',
+            metadata: {
+              url: args[0],
+              error: error
+            }
+          });
+        }
         throw error;
       }
     };
