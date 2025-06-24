@@ -561,7 +561,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
         
         <Button
           onClick={handleExport}
-          className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold px-8"
+          className="cyber-button bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold px-8 energy-pulse"
           disabled={isLoading || !!error || getTrimmedDuration() < 0.1}
         >
           <Download className="h-4 w-4 mr-2" />

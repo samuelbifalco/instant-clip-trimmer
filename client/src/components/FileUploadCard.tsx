@@ -150,7 +150,7 @@ export const FileUploadCard = ({ onVideoSelected }: FileUploadCardProps) => {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700/50 backdrop-blur-sm overflow-hidden hover:border-gray-600/50 transition-all duration-300">
+    <Card className="cyber-card bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700/50 backdrop-blur-sm overflow-hidden hover:border-gray-600/50 transition-all duration-300">
       <CardContent className="p-0">
         <div className="p-8 border-b border-gray-700/50">
           <h3 className="text-2xl font-bold flex items-center text-white mb-2">

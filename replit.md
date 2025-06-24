@@ -1,87 +1,76 @@
 # ClipCut - Professional Video Trimming Tool
 
 ## Project Overview
-ClipCut is a modern, web-based video trimming application that allows users to edit videos directly in their browser. The project has been successfully migrated from Lovable to Replit with enhanced features including futuristic neon styling, Google AdSense integration, and improved video trimming functionality.
+ClipCut is a browser-based video trimming application that allows users to trim and edit videos completely client-side. The application features a futuristic neon design with cyber-themed styling, Google AdSense integration, and production-ready functionality.
 
 ## Recent Changes
-- **2025-01-23**: Successfully migrated from Lovable to Replit
-- **2025-01-23**: Fixed video trimming logic - playhead now respects trim bounds
-- **2025-01-23**: Enhanced UI with futuristic neon/cyber styling
-- **2025-01-23**: Added Google AdSense integration with modal before download
-- **2025-01-23**: Updated footer with Redcel brand link
-- **2025-01-23**: Improved video seeking to enforce trim boundaries
+- **2025-01-24**: Successfully migrated from Lovable to Replit
+- **2025-01-24**: Fixed video trimming functionality - playhead now respects trim bounds
+- **2025-01-24**: Added futuristic neon styling with toned-down effects for readability
+- **2025-01-24**: Integrated Google AdSense with modal ads before download
+- **2025-01-24**: Updated footer with Redcel branding and proper copyright
+- **2025-01-24**: Applied cyber-themed styling throughout the application
 
-## Architecture
+## Project Architecture
 
-### Frontend (React + TypeScript)
-- **Framework**: React 18 with TypeScript
+### Frontend
+- **Framework**: React with TypeScript
 - **Styling**: Tailwind CSS with custom cyber/neon effects
-- **UI Components**: Radix UI primitives
-- **Video Processing**: HTML5 Video API with Web APIs
-- **File Handling**: react-dropzone for drag-and-drop uploads
-- **State Management**: React hooks and local state
+- **UI Components**: Radix UI primitives with custom styling
+- **State Management**: React hooks
+- **Video Processing**: Web APIs (HTML5 video element)
 
-### Backend (Express.js)
+### Backend
 - **Server**: Express.js with TypeScript
-- **Development**: Vite for hot module replacement
-- **Production**: Static file serving
-- **Database**: PostgreSQL with Drizzle ORM (optional)
+- **Database**: PostgreSQL with Drizzle ORM
+- **Session Management**: Express sessions with PostgreSQL storage
+- **API**: RESTful endpoints with /api prefix
 
 ### Key Features
-1. **Video Trimming**: Precise start/end time controls with real-time preview
-2. **Browser-based Processing**: No server uploads - all processing client-side
-3. **Futuristic UI**: Neon glow effects, holographic text, cyber grid backgrounds
-4. **Google AdSense**: Strategic ad placements and pre-download modal
-5. **Privacy First**: Files never leave user's device
-6. **Format Support**: MP4, AVI, MOV, MKV, WebM, M4V, 3GP
-7. **Responsive Design**: Works on desktop and mobile devices
+- **Video Trimming**: Client-side video trimming with precise start/end time controls
+- **Playhead Constraints**: Video playback respects trim boundaries
+- **Export Functionality**: Downloads trimmed video segments
+- **AdSense Integration**: Strategically placed ads and pre-download modals
+- **Futuristic Design**: Cyber-themed UI with neon effects and glassmorphism
+- **Privacy-First**: All processing happens client-side
 
-### Security Features
-- Content Security Policy headers
-- XSS protection
-- Frame options security
-- HTTPS enforcement
-- No file uploads to server
-- Client-side validation
-
-### Performance
-- Lazy loading components
-- Optimized video processing
-- Memory leak prevention
-- Error boundaries
-- Health monitoring
-- Analytics tracking
+### Security & Privacy
+- **Client-Side Processing**: Videos never leave the user's device
+- **Privacy Banner**: GDPR-compliant consent management
+- **Security Headers**: XSS protection, content type validation, frame options
+- **No Upload Required**: Direct file processing without server uploads
 
 ## User Preferences
-- Design: Futuristic neon/cyber aesthetic with cyan and purple color scheme
-- Brand: ClipCut as a Redcel brand with link to https://redcelventures.com
-- Monetization: Google AdSense integration with respectful ad placement
-- UX: Professional but engaging, fast and efficient workflow
+- Prefers futuristic, neon-themed design aesthetics
+- Values readability over excessive visual effects
+- Wants Google AdSense integration for monetization
+- Requires production-ready, secure implementation
 
-## Deployment
-- Platform: Replit Deployments
-- Build: Vite production build
-- Server: Express.js serving static files
-- Port: 5000 (bound to 0.0.0.0 for Replit compatibility)
+## External Dependencies
 
-## Technical Fixes Applied
-1. **Video Trimming Logic**: 
-   - Playhead enforcement within trim bounds
-   - Proper seeking with boundary checks
-   - Auto-pause when reaching end time
-   
-2. **Export Functionality**:
-   - Ad modal before download
-   - Proper file naming with trim times
-   - Error handling and user feedback
+### Frontend Dependencies
+- **UI Components**: Radix UI primitives for accessible components
+- **Icons**: Lucide React for consistent iconography
+- **File Handling**: react-dropzone for drag-and-drop file uploads
+- **Routing**: React Router DOM for navigation
+- **Analytics**: Custom analytics implementation
 
-3. **UI Enhancements**:
-   - Cyber/neon styling throughout
-   - Animated backgrounds and effects
-   - Consistent color scheme (cyan/purple)
-   - Glass morphism effects
+### Backend Dependencies
+- **Database**: Drizzle ORM with PostgreSQL dialect
+- **Session Storage**: connect-pg-simple for PostgreSQL sessions
+- **Validation**: Zod for runtime type checking
+- **Development**: tsx for TypeScript execution in development
 
-## Environment Setup
-- Node.js 20
-- PostgreSQL 16 (optional)
-- Dependencies automatically managed via package.json
+## Deployment Configuration
+- **Platform**: Replit with autoscale deployment
+- **Build**: Vite for frontend, esbuild for backend
+- **Port**: 5000 (serves both API and static files)
+- **Environment**: Production-ready with proper error handling
+
+## Current Status
+✅ Migration completed successfully
+✅ Video trimming functionality working correctly
+✅ Futuristic design implemented with readable styling
+✅ Google AdSense integration added
+✅ Footer updated with proper branding
+✅ Production-ready deployment configuration
