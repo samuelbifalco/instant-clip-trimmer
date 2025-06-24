@@ -458,7 +458,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
                 onValueChange={handleTrimStartChange}
                 max={trimEnd - 0.1}
                 step={0.1}
-                className="w-full"
+                className="w-full cyber-slider"
                 aria-label="Trim start time"
                 disabled={isLoading || !!error}
               />
@@ -475,7 +475,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
                 min={trimStart + 0.1}
                 max={duration}
                 step={0.1}
-                className="w-full"
+                className="w-full cyber-slider"
                 aria-label="Trim end time"
                 disabled={isLoading || !!error}
               />

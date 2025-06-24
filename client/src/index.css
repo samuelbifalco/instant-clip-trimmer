@@ -6,19 +6,19 @@
 /* Futuristic Neon Effects */
 @keyframes neon-glow {
   0%, 100% {
-    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff;
+    text-shadow: 0 0 2px #00ffff, 0 0 4px #00ffff, 0 0 6px #00ffff;
   }
   50% {
-    text-shadow: 0 0 2px #00ffff, 0 0 5px #00ffff, 0 0 8px #00ffff, 0 0 12px #00ffff;
+    text-shadow: 0 0 1px #00ffff, 0 0 2px #00ffff, 0 0 4px #00ffff;
   }
 }
 
 @keyframes pulse-neon {
   0%, 100% {
-    box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, inset 0 0 15px rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 2px #00ffff, 0 0 4px #00ffff, 0 0 6px rgba(0, 255, 255, 0.3);
   }
   50% {
-    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, inset 0 0 25px rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff, 0 0 12px rgba(0, 255, 255, 0.4);
   }
 }
 
@@ -33,12 +33,12 @@
 
 .neon-text {
   color: #00ffff;
-  animation: neon-glow 2s ease-in-out infinite alternate;
+  animation: neon-glow 3s ease-in-out infinite alternate;
 }
 
 .neon-border {
   border: 1px solid #00ffff;
-  animation: pulse-neon 3s ease-in-out infinite;
+  animation: pulse-neon 4s ease-in-out infinite;
 }
 
 .cyber-grid {
@@ -98,8 +98,8 @@
 
 .cyber-button:hover {
   background: linear-gradient(45deg, rgba(0, 255, 255, 0.2), rgba(138, 43, 226, 0.2));
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-  transform: translateY(-2px);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .cyber-button::before {
@@ -154,7 +154,7 @@
 .cyber-slider [role="slider"] {
   background: linear-gradient(45deg, #00ffff, #8a2be2);
   border: 2px solid #00ffff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
 }
 
 /* Card Enhancements */

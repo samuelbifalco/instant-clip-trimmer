@@ -103,17 +103,17 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
   };
 
   return (
-    <Card className="bg-gray-800 border-gray-700">
+    <Card className="cyber-card bg-gray-800 border-gray-700">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold text-white flex items-center">
-          <FileVideo className="h-5 w-5 mr-2 text-blue-400" />
+        <CardTitle className="text-xl font-bold neon-text flex items-center">
+          <FileVideo className="h-5 w-5 mr-2 text-cyan-400" />
           Export Settings
         </CardTitle>
         <Button
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="text-gray-400 hover:text-white"
+          className="cyber-button text-gray-400 hover:text-white"
         >
           <X className="h-4 w-4" />
         </Button>
