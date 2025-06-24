@@ -269,6 +269,15 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
           </div>
         )}
       </CardContent>
+
+      {/* Ad Modal */}
+      <AdSenseModal 
+        isOpen={showAdModal} 
+        onClose={() => {
+          setShowAdModal(false);
+          processVideoExport();
+        }} 
+      />
     </Card>
   );
 };

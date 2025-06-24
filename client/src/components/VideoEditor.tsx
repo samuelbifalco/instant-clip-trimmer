@@ -169,12 +169,22 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
     if (!video || error) return;
 
     try {
-      video.currentTime = value[0];
-      setCurrentTime(value[0]);
+      const seekTime = value[0];
+      // Enforce trim bounds when seeking
+      if (seekTime < trimStart) {
+        video.currentTime = trimStart;
+        setCurrentTime(trimStart);
+      } else if (seekTime > trimEnd) {
+        video.currentTime = trimEnd;
+        setCurrentTime(trimEnd);
+      } else {
+        video.currentTime = seekTime;
+        setCurrentTime(seekTime);
+      }
     } catch (err) {
       console.error('Seek error:', err);
     }
-  }, [error]);
+  }, [error, trimStart, trimEnd]);
 
   const handleTrimStartChange = useCallback((value: number[]) => {
     const newStart = value[0];
@@ -359,9 +369,9 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
       </Card>
 
       {/* Video Player */}
-      <Card className="bg-gray-800 border-gray-700 overflow-hidden">
+      <Card className="cyber-card bg-gray-800 border-gray-700 overflow-hidden">
         <CardContent className="p-0">
-          <div className="relative bg-black rounded-lg overflow-hidden">
+          <div className="relative bg-black rounded-lg overflow-hidden video-container">
             {isLoading && (
               <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
                 <div className="text-center space-y-4">
@@ -417,7 +427,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
       </Card>
 
       {/* Timeline and Controls */}
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className="cyber-card bg-gray-800 border-gray-700">
         <CardContent className="p-6 space-y-6">
           {/* Main Timeline */}
           <div className="space-y-3">
@@ -430,7 +440,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
               onValueChange={handleSeek}
               max={duration}
               step={0.1}
-              className="w-full"
+              className="w-full cyber-slider"
               aria-label="Video timeline"
               disabled={isLoading || !!error}
             />

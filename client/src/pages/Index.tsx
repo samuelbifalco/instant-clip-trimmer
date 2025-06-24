@@ -104,29 +104,40 @@ const Index = () => {
       <Header />
       <main className="container mx-auto px-4 py-12 relative z-10">
         {!videoFile ? (
-          <VideoUpload onVideoSelected={handleVideoSelected} />
+          <>
+            <VideoUpload onVideoSelected={handleVideoSelected} />
+            
+            {/* Ad placement for homepage */}
+            <div className="mt-12 flex justify-center">
+              <AdSenseAd 
+                slot="1234567890"
+                style={{ width: "728px", height: "90px" }}
+                format="horizontal"
+                className="max-w-full"
+              />
+            </div>
+          </>
         ) : (
-          <VideoEditor 
-            videoFile={videoFile} 
-            videoUrl={videoUrl} 
-            onReset={handleReset}
-          />
+          <>
+            <VideoEditor 
+              videoFile={videoFile} 
+              videoUrl={videoUrl} 
+              onReset={handleReset}
+            />
+            
+            {/* Ad placement for editor view */}
+            <div className="mt-8 flex justify-center">
+              <AdSenseAd 
+                slot="0987654321"
+                style={{ width: "300px", height: "250px" }}
+                format="rectangle"
+              />
+            </div>
+          </>
         )}
       </main>
 
-      {/* Subtle footer */}
-      <footer className="relative z-10 border-t border-gray-800/50 mt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-gray-500 text-sm">
-            <p>© 2024 ClipCut. Professional video trimming made simple.</p>
-            <p className="mt-2">
-              <a href="#privacy" className="hover:text-gray-300 transition-colors">Privacy Policy</a> • 
-              <a href="#terms" className="hover:text-gray-300 transition-colors ml-2">Terms of Service</a> • 
-              <a href="#support" className="hover:text-gray-300 transition-colors ml-2">Support</a>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Production-ready components */}
       <PrivacyBanner />
