@@ -19,7 +19,9 @@ class ErrorReporter {
   private isEnabled = true;
 
   constructor() {
-    this.setupGlobalErrorHandlers();
+    if (this.isEnabled) {
+      this.setupGlobalErrorHandlers();
+    }
   }
 
   private setupGlobalErrorHandlers() {
@@ -46,7 +48,7 @@ class ErrorReporter {
       }
     });
 
-    // Unhandled Promise rejections
+    // Unhandled Promise rejections - completely suppress AdSense errors
     window.addEventListener('unhandledrejection', (event) => {
       const errorMessage = event.reason?.message || 'Unhandled promise rejection';
       const errorStack = event.reason?.stack || '';
@@ -64,17 +66,21 @@ class ErrorReporter {
                               errorStack.includes('show_ads_impl')
                             ));
       
-      if (!isAdSenseError) {
-        this.reportError({
-          type: 'promise',
-          message: errorMessage,
-          stack: errorStack,
-          severity: 'medium',
-          metadata: {
-            reason: event.reason
-          }
-        });
+      // Prevent default error handling for AdSense errors to stop console logs
+      if (isAdSenseError) {
+        event.preventDefault();
+        return;
       }
+      
+      this.reportError({
+        type: 'promise',
+        message: errorMessage,
+        stack: errorStack,
+        severity: 'medium',
+        metadata: {
+          reason: event.reason
+        }
+      });
     });
 
     // Network errors
@@ -136,6 +142,14 @@ class ErrorReporter {
 
   public reportError(error: Partial<ErrorReport>) {
     if (!this.isEnabled) return;
+
+    // Double-check to prevent AdSense errors from being logged
+    const isAdSenseError = error.stack?.includes('googlesyndication.com') ||
+                          error.stack?.includes('pagead') ||
+                          error.stack?.includes('show_ads_impl') ||
+                          error.message?.includes('Failed to fetch') && error.stack?.includes('adsbygoogle');
+    
+    if (isAdSenseError) return;
 
     const report: ErrorReport = {
       id: this.generateErrorId(),
