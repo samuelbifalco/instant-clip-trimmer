@@ -57,7 +57,12 @@ class ErrorReporter {
                             errorStack.includes('pagead') ||
                             errorStack.includes('show_ads_impl') ||
                             errorStack.includes('adsbygoogle') ||
-                            (errorMessage.includes('Failed to fetch') && errorStack.includes('adsense'));
+                            errorStack.includes('adsense') ||
+                            (errorMessage.includes('Failed to fetch') && (
+                              errorStack.includes('googlesyndication') ||
+                              errorStack.includes('pagead') ||
+                              errorStack.includes('show_ads_impl')
+                            ));
       
       if (!isAdSenseError) {
         this.reportError({
