@@ -141,7 +141,7 @@
   z-index: 1;
 }
 
-/* Slider Enhancements */
+/* Enhanced Slider Styles */
 .cyber-slider {
   position: relative;
 }
@@ -155,6 +155,38 @@
   background: linear-gradient(45deg, #00ffff, #8a2be2);
   border: 2px solid #00ffff;
   box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+/* Beautiful Slider Redesign */
+[data-radix-slider-range] {
+  background: linear-gradient(90deg, #06ffa5, #00d4ff, #ff006e) !important;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(6, 255, 165, 0.4);
+}
+
+[data-radix-slider-track] {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-radix-slider-thumb] {
+  background: linear-gradient(45deg, #06ffa5, #00d4ff) !important;
+  border: 3px solid white !important;
+  box-shadow: 0 0 15px rgba(6, 255, 165, 0.6), 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  width: 24px !important;
+  height: 24px !important;
+  transition: all 0.3s ease !important;
+}
+
+[data-radix-slider-thumb]:hover {
+  transform: scale(1.2) !important;
+  box-shadow: 0 0 20px rgba(6, 255, 165, 0.8), 0 6px 15px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-radix-slider-thumb]:focus {
+  outline: none !important;
+  box-shadow: 0 0 25px rgba(6, 255, 165, 1), 0 8px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* Card Enhancements */

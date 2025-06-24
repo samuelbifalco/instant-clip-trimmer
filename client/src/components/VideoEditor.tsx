@@ -333,215 +333,225 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-gradient-to-r from-slate-900/50 to-gray-900/50 rounded-2xl p-6 border border-cyan-500/20 backdrop-blur-sm">
         <Button
           variant="ghost"
           onClick={handleReset}
-          className="text-gray-300 hover:text-white"
+          className="text-white hover:text-cyan-400 hover:bg-cyan-500/10 border border-cyan-500/30 px-6 py-3 rounded-xl transition-all duration-300"
           aria-label="Go back to upload"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-5 w-5 mr-3" />
           Back to Upload
         </Button>
         
-        <div className="flex items-center space-x-4">
-          <Badge variant="secondary" className="bg-blue-500/20 text-blue-300">
-            Original: {formatTime(duration)}
-          </Badge>
-          <Badge variant="secondary" className="bg-green-500/20 text-green-300">
-            Trimmed: {formatTime(getTrimmedDuration())}
-          </Badge>
+        <div className="flex items-center space-x-6">
+          <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-6 py-3 rounded-xl border border-blue-500/30">
+            <span className="text-blue-300 font-medium">Original: {formatTime(duration)}</span>
+          </div>
+          <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-6 py-3 rounded-xl border border-green-500/30">
+            <span className="text-green-300 font-medium">Trimmed: {formatTime(getTrimmedDuration())}</span>
+          </div>
         </div>
       </div>
 
-      {/* Keyboard shortcuts hint */}
-      <Card className="bg-gray-800/50 border-gray-700/50">
-        <CardContent className="p-4">
-          <p className="text-sm text-gray-400 text-center">
-            Keyboard shortcuts: <kbd className="bg-gray-700 px-2 py-1 rounded text-xs">Space</kbd> Play/Pause • 
-            <kbd className="bg-gray-700 px-2 py-1 rounded text-xs ml-2">←/→</kbd> Skip • 
-            <kbd className="bg-gray-700 px-2 py-1 rounded text-xs ml-2">M</kbd> Mute • 
-            <kbd className="bg-gray-700 px-2 py-1 rounded text-xs ml-2">F</kbd> Fullscreen
-          </p>
-        </CardContent>
-      </Card>
+      {/* Video Player - Stunning Design */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
+        <Card className="relative bg-gradient-to-br from-slate-900/90 to-gray-900/90 border-2 border-cyan-500/30 rounded-3xl overflow-hidden backdrop-blur-sm">
+          <CardContent className="p-0">
+            <div className="relative bg-black rounded-3xl overflow-hidden">
+              {isLoading && (
+                <div className="absolute inset-0 bg-black/90 flex items-center justify-center z-10 rounded-3xl">
+                  <div className="text-center space-y-6">
+                    <div className="relative">
+                      <Loader2 className="h-16 w-16 text-cyan-400 animate-spin mx-auto" />
+                      <div className="absolute inset-0 h-16 w-16 rounded-full border-2 border-cyan-500/30 mx-auto animate-pulse"></div>
+                    </div>
+                    <p className="text-white text-xl font-medium">Loading your video...</p>
+                  </div>
+                </div>
+              )}
 
-      {/* Video Player */}
-      <Card className="cyber-card bg-gray-800 border-gray-700 overflow-hidden">
-        <CardContent className="p-0">
-          <div className="relative bg-black rounded-lg overflow-hidden video-container">
-            {isLoading && (
-              <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
-                <div className="text-center space-y-4">
-                  <Loader2 className="h-12 w-12 text-blue-400 animate-spin mx-auto" />
-                  <p className="text-white text-lg">Loading video...</p>
+              {buffering && !isLoading && (
+                <div className="absolute top-6 left-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm text-cyan-300 px-4 py-2 rounded-full text-sm z-10 border border-cyan-500/30">
+                  <Loader2 className="h-4 w-4 inline mr-2 animate-spin" />
+                  Buffering...
+                </div>
+              )}
+
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                className="w-full max-h-[70vh] object-contain rounded-3xl"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                preload="metadata"
+                aria-label="Video player"
+              />
+              
+              {/* Video Overlay Controls */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 hover:opacity-100 transition-all duration-300 flex items-center justify-center rounded-3xl">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={togglePlayPause}
+                  className="bg-gradient-to-r from-cyan-500/30 to-blue-500/30 backdrop-blur-sm text-white hover:from-cyan-500/50 hover:to-blue-500/50 w-20 h-20 rounded-full border border-cyan-500/50 transition-all duration-300 hover:scale-110"
+                  aria-label={isPlaying ? "Pause video" : "Play video"}
+                  disabled={isLoading || !!error}
+                >
+                  {isPlaying ? <Pause className="h-10 w-10" /> : <Play className="h-10 w-10" />}
+                </Button>
+              </div>
+              
+              {/* Fullscreen button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleFullscreen}
+                className="absolute top-6 right-6 bg-gradient-to-r from-gray-900/50 to-slate-900/50 backdrop-blur-sm text-white hover:text-cyan-400 border border-gray-600/50 hover:border-cyan-500/50 transition-all duration-300"
+                aria-label="Toggle fullscreen"
+              >
+                <Maximize className="h-5 w-5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Timeline and Controls - Beautiful Design */}
+      <Card className="bg-gradient-to-br from-slate-900/80 to-gray-900/80 border-2 border-gray-700/50 backdrop-blur-sm rounded-2xl">
+        <CardContent className="p-8 space-y-8">
+          {/* Main Timeline */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-semibold text-white">Playhead</span>
+              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-4 py-2 rounded-xl border border-cyan-500/30">
+                <span className="text-cyan-300 font-mono text-lg">{formatTime(currentTime)}</span>
+              </div>
+            </div>
+            <div className="relative">
+              <Slider
+                value={[currentTime]}
+                onValueChange={handleSeek}
+                max={duration}
+                step={0.1}
+                className="w-full h-3"
+                aria-label="Video timeline"
+                disabled={isLoading || !!error}
+              />
+            </div>
+          </div>
+
+          {/* Trim Controls */}
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold text-emerald-400">Start Time</span>
+                <div className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 px-4 py-2 rounded-xl border border-emerald-500/30">
+                  <span className="text-emerald-300 font-mono text-lg">{formatTime(trimStart)}</span>
                 </div>
               </div>
-            )}
-
-            {buffering && !isLoading && (
-              <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm z-10">
-                <Loader2 className="h-4 w-4 inline mr-2 animate-spin" />
-                Buffering...
+              <div className="relative">
+                <Slider
+                  value={[trimStart]}
+                  onValueChange={handleTrimStartChange}
+                  max={trimEnd - 0.1}
+                  step={0.1}
+                  className="w-full h-3"
+                  aria-label="Trim start time"
+                  disabled={isLoading || !!error}
+                />
               </div>
-            )}
-
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              className="w-full max-h-[60vh] object-contain"
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              preload="metadata"
-              aria-label="Video player"
-            />
+            </div>
             
-            {/* Video Overlay Controls */}
-            <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold text-rose-400">End Time</span>
+                <div className="bg-gradient-to-r from-rose-500/20 to-red-500/20 px-4 py-2 rounded-xl border border-rose-500/30">
+                  <span className="text-rose-300 font-mono text-lg">{formatTime(trimEnd)}</span>
+                </div>
+              </div>
+              <div className="relative">
+                <Slider
+                  value={[trimEnd]}
+                  onValueChange={handleTrimEndChange}
+                  min={trimStart + 0.1}
+                  max={duration}
+                  step={0.1}
+                  className="w-full h-3"
+                  aria-label="Trim end time"
+                  disabled={isLoading || !!error}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Playback Controls - Beautiful Layout */}
+          <div className="flex items-center justify-between pt-4">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={skipBackward}
+                className="text-white hover:text-cyan-400 hover:bg-cyan-500/10 border border-gray-600/50 hover:border-cyan-500/50 rounded-xl px-4 py-3 transition-all duration-300"
+                aria-label="Skip backward 10 seconds"
+                disabled={isLoading || !!error}
+              >
+                <SkipBack className="h-5 w-5" />
+              </Button>
               <Button
                 variant="ghost"
                 size="lg"
                 onClick={togglePlayPause}
-                className="bg-black/50 text-white hover:bg-black/70 w-16 h-16 rounded-full"
-                aria-label={isPlaying ? "Pause video" : "Play video"}
-                disabled={isLoading || !!error}
-              >
-                {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-              </Button>
-            </div>
-            
-            {/* Fullscreen button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleFullscreen}
-              className="absolute top-4 right-4 bg-black/50 text-white hover:bg-black/70"
-              aria-label="Toggle fullscreen"
-            >
-              <Maximize className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Timeline and Controls */}
-      <Card className="cyber-card bg-gray-800 border-gray-700">
-        <CardContent className="p-6 space-y-6">
-          {/* Main Timeline */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-300">Playhead</span>
-              <span className="text-sm text-gray-400">{formatTime(currentTime)}</span>
-            </div>
-            <Slider
-              value={[currentTime]}
-              onValueChange={handleSeek}
-              max={duration}
-              step={0.1}
-              className="w-full cyber-slider"
-              aria-label="Video timeline"
-              disabled={isLoading || !!error}
-            />
-          </div>
-
-          {/* Trim Controls */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-green-400">Start Time</span>
-                <span className="text-sm text-gray-400">{formatTime(trimStart)}</span>
-              </div>
-              <Slider
-                value={[trimStart]}
-                onValueChange={handleTrimStartChange}
-                max={trimEnd - 0.1}
-                step={0.1}
-                className="w-full cyber-slider"
-                aria-label="Trim start time"
-                disabled={isLoading || !!error}
-              />
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-red-400">End Time</span>
-                <span className="text-sm text-gray-400">{formatTime(trimEnd)}</span>
-              </div>
-              <Slider
-                value={[trimEnd]}
-                onValueChange={handleTrimEndChange}
-                min={trimStart + 0.1}
-                max={duration}
-                step={0.1}
-                className="w-full cyber-slider"
-                aria-label="Trim end time"
-                disabled={isLoading || !!error}
-              />
-            </div>
-          </div>
-
-          {/* Playback Controls */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={skipBackward}
-                className="text-gray-300 hover:text-white"
-                aria-label="Skip backward 10 seconds"
-                disabled={isLoading || !!error}
-              >
-                <SkipBack className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={togglePlayPause}
-                className="text-gray-300 hover:text-white"
+                className="text-white hover:text-cyan-400 hover:bg-cyan-500/10 border border-gray-600/50 hover:border-cyan-500/50 rounded-xl px-6 py-3 transition-all duration-300"
                 aria-label={isPlaying ? "Pause" : "Play"}
                 disabled={isLoading || !!error}
               >
-                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
               </Button>
               <Button
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={skipForward}
-                className="text-gray-300 hover:text-white"
+                className="text-white hover:text-cyan-400 hover:bg-cyan-500/10 border border-gray-600/50 hover:border-cyan-500/50 rounded-xl px-4 py-3 transition-all duration-300"
                 aria-label="Skip forward 10 seconds"
                 disabled={isLoading || !!error}
               >
-                <SkipForward className="h-4 w-4" />
+                <SkipForward className="h-5 w-5" />
               </Button>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={toggleMute}
-                className="text-gray-300 hover:text-white"
+                className="text-white hover:text-cyan-400 hover:bg-cyan-500/10 border border-gray-600/50 hover:border-cyan-500/50 rounded-xl px-4 py-3 transition-all duration-300"
                 aria-label={isMuted ? "Unmute" : "Mute"}
+                disabled={isLoading || !!error}
               >
-                {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
               </Button>
-              <Slider
-                value={[volume]}
-                onValueChange={handleVolumeChange}
-                max={100}
-                step={1}
-                className="w-20"
-                aria-label="Volume control"
-              />
+              <div className="w-32">
+                <Slider
+                  value={[volume]}
+                  onValueChange={handleVolumeChange}
+                  max={100}
+                  step={1}
+                  className="w-full h-2"
+                  aria-label="Volume control"
+                  disabled={isLoading || !!error || isMuted}
+                />
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {/* Action Buttons - Stunning Design */}
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-6 pt-4">
         <Button
           onClick={() => {
             setTrimStart(0);
@@ -552,22 +562,38 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
             });
           }}
           variant="outline"
-          className="border-gray-600 text-gray-300 hover:bg-gray-700"
+          className="border-2 border-gray-600/50 text-white hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-500/10 rounded-xl px-8 py-4 text-lg font-medium transition-all duration-300"
           disabled={isLoading || !!error}
         >
-          <RotateCcw className="h-4 w-4 mr-2" />
+          <RotateCcw className="h-5 w-5 mr-3" />
           Reset Trim
         </Button>
         
-        <Button
-          onClick={handleExport}
-          className="cyber-button bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold px-8 energy-pulse"
-          disabled={isLoading || !!error || getTrimmedDuration() < 0.1}
-        >
-          <Download className="h-4 w-4 mr-2" />
-          Export Trimmed Video
-        </Button>
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-blue-500/20 rounded-2xl blur-lg"></div>
+          <Button
+            onClick={handleExport}
+            className="relative bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white font-bold px-12 py-4 text-lg rounded-2xl shadow-2xl border border-emerald-500/50 transition-all duration-300 hover:scale-105"
+            disabled={isLoading || !!error || getTrimmedDuration() < 0.1}
+          >
+            <Download className="h-6 w-6 mr-3" />
+            Export Trimmed Video
+          </Button>
+        </div>
       </div>
+
+      {/* Keyboard Shortcuts - Beautiful Info */}
+      <Card className="bg-gradient-to-r from-slate-900/50 to-gray-900/50 border border-gray-700/50 backdrop-blur-sm rounded-2xl">
+        <CardContent className="p-6">
+          <p className="text-center text-gray-300 text-lg">
+            Keyboard shortcuts: 
+            <kbd className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-3 py-2 rounded-lg text-cyan-300 mx-2 border border-cyan-500/30">Space</kbd> Play/Pause
+            <kbd className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-3 py-2 rounded-lg text-cyan-300 mx-2 border border-cyan-500/30">←/→</kbd> Skip
+            <kbd className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-3 py-2 rounded-lg text-cyan-300 mx-2 border border-cyan-500/30">M</kbd> Mute
+            <kbd className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-3 py-2 rounded-lg text-cyan-300 mx-2 border border-cyan-500/30">F</kbd> Fullscreen
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Export Panel */}
       {showExportPanel && (
