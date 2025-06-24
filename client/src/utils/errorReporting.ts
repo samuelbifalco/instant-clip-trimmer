@@ -25,17 +25,25 @@ class ErrorReporter {
   private setupGlobalErrorHandlers() {
     // Global JavaScript errors
     window.addEventListener('error', (event) => {
-      this.reportError({
-        type: 'javascript',
-        message: event.message,
-        stack: event.error?.stack,
-        severity: 'high',
-        metadata: {
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno
-        }
-      });
+      // Skip AdSense-related JavaScript errors
+      const isAdSenseError = event.filename?.includes('googlesyndication.com') ||
+                            event.filename?.includes('show_ads_impl') ||
+                            event.message?.includes('adsbygoogle') ||
+                            event.error?.stack?.includes('pagead');
+      
+      if (!isAdSenseError) {
+        this.reportError({
+          type: 'javascript',
+          message: event.message,
+          stack: event.error?.stack,
+          severity: 'high',
+          metadata: {
+            filename: event.filename,
+            lineno: event.lineno,
+            colno: event.colno
+          }
+        });
+      }
     });
 
     // Unhandled Promise rejections
@@ -47,7 +55,9 @@ class ErrorReporter {
       const isAdSenseError = errorStack.includes('googlesyndication.com') || 
                             errorStack.includes('googleadservices.com') ||
                             errorStack.includes('pagead') ||
-                            (errorMessage.includes('Failed to fetch') && errorStack.includes('adsbygoogle'));
+                            errorStack.includes('show_ads_impl') ||
+                            errorStack.includes('adsbygoogle') ||
+                            (errorMessage.includes('Failed to fetch') && errorStack.includes('adsense'));
       
       if (!isAdSenseError) {
         this.reportError({
@@ -76,8 +86,10 @@ class ErrorReporter {
         const url = args[0]?.toString() || '';
         const isAdSenseRequest = url.includes('googlesyndication.com') || 
                                 url.includes('googleadservices.com') ||
-                                url.includes('pagead');
-        
+                                url.includes('pagead') ||
+                                url.includes('show_ads_impl') ||
+                                url.includes('adsense');
+
         if (!response.ok && !isAdSenseRequest) {
           this.reportError({
             type: 'network',
@@ -97,7 +109,9 @@ class ErrorReporter {
         const url = args[0]?.toString() || '';
         const isAdSenseRequest = url.includes('googlesyndication.com') || 
                                 url.includes('googleadservices.com') ||
-                                url.includes('pagead');
+                                url.includes('pagead') ||
+                                url.includes('show_ads_impl') ||
+                                url.includes('adsense');
         
         if (!isAdSenseRequest) {
           this.reportError({
