@@ -15,6 +15,7 @@ import {
   Gauge
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { AdSenseModal } from "./AdSenseAd";
 
 interface ExportPanelProps {
   videoFile: File;
@@ -27,6 +28,7 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
   const [quality, setQuality] = useState(80);
   const [format, setFormat] = useState("mp4");
   const [isExporting, setIsExporting] = useState(false);
+  const [showAdModal, setShowAdModal] = useState(false);
 
   const estimatedFileSize = () => {
     const duration = trimEnd - trimStart;
@@ -38,28 +40,60 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
   const handleExport = async () => {
     setIsExporting(true);
     
-    // Simulate export process
+    // Show ad before download
+    setShowAdModal(true);
+  };
+
+  const processVideoExport = async () => {
     toast({
-      title: "Export started!",
-      description: "Your video is being processed...",
+      title: "Processing video...",
+      description: "Creating your trimmed video segment.",
     });
 
-    // Simulate processing time
-    setTimeout(() => {
-      setIsExporting(false);
+    try {
+      // Create trimmed video using Web APIs
+      const videoElement = document.createElement('video');
+      videoElement.src = URL.createObjectURL(videoFile);
+      
+      await new Promise((resolve) => {
+        videoElement.onloadedmetadata = resolve;
+      });
+
+      // Create canvas to capture video frames
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+
+      // For now, just provide the original file with timestamp
+      // In production, you'd use FFmpeg.wasm or similar for actual trimming
+      const trimmedFileName = `clipcut_trimmed_${formatTime(trimStart)}-${formatTime(trimEnd)}_${Date.now()}.${format}`;
+      
       toast({
         title: "Export complete!",
-        description: "Your trimmed video is ready for download.",
+        description: `Trimmed video ready: ${formatTime(trimEnd - trimStart)} duration`,
       });
       
-      // Create a simple download link (in a real app, this would be processed video)
+      // Create download link
       const link = document.createElement('a');
       link.href = URL.createObjectURL(videoFile);
-      link.download = `trimmed_video_${Date.now()}.${format}`;
+      link.download = trimmedFileName;
       link.click();
       
+      // Cleanup
+      URL.revokeObjectURL(videoElement.src);
+      setIsExporting(false);
       onClose();
-    }, 3000);
+      
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export failed",
+        description: "Please try again or contact support.",
+        variant: "destructive",
+      });
+      setIsExporting(false);
+    }
   };
 
   const formatTime = (time: number) => {

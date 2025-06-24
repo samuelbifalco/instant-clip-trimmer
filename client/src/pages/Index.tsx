@@ -5,6 +5,8 @@ import { VideoEditor } from "@/components/VideoEditor";
 import { Header } from "@/components/Header";
 import { PrivacyBanner } from "@/components/PrivacyBanner";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { Footer } from "@/components/Footer";
+import { AdSenseAd } from "@/components/AdSenseAd";
 import { analytics } from "@/utils/analytics";
 import { initializeHealthMonitoring } from "@/utils/healthCheck";
 import { errorReporter } from "@/utils/errorReporting";

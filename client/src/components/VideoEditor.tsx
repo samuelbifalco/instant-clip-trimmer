@@ -88,14 +88,20 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
     };
 
     const handleTimeUpdate = () => {
-      setCurrentTime(video.currentTime);
+      const currentTime = video.currentTime;
+      setCurrentTime(currentTime);
+      
+      // Enforce trim bounds - pause and reset if beyond end time
+      if (currentTime >= trimEnd) {
+        video.pause();
+        video.currentTime = trimStart;
+        setIsPlaying(false);
+      }
     };
 
     const handleEnded = () => {
       setIsPlaying(false);
-      if (video.currentTime >= trimEnd) {
-        video.currentTime = trimStart;
-      }
+      video.currentTime = trimStart;
     };
 
     const handleError = (e: Event) => {
