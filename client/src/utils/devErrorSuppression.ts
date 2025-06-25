@@ -1,6 +1,42 @@
-// Development-only error suppression for AdSense
+// Development-only error suppression for AdSense and runtime errors
 export function suppressAdSenseErrors() {
   if (!import.meta.env.DEV) return;
+
+  // Hide Vite runtime error overlay
+  const hideErrorOverlay = () => {
+    const overlay = document.querySelector('[data-vite-runtime-error-modal]');
+    if (overlay) {
+      (overlay as HTMLElement).style.display = 'none';
+    }
+    
+    // Also hide any error overlays with these classes/IDs
+    const selectors = [
+      '.vite-error-overlay',
+      '#vite-error-overlay', 
+      '[data-test-id="error-overlay"]',
+      '.error-overlay'
+    ];
+    
+    selectors.forEach(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        (element as HTMLElement).style.display = 'none';
+      }
+    });
+  };
+
+  // Check for and hide error overlays periodically
+  const intervalId = setInterval(hideErrorOverlay, 100);
+  
+  // Also hide on DOM mutations
+  const observer = new MutationObserver(() => {
+    hideErrorOverlay();
+  });
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
 
   // Override unhandled rejection handling to prevent AdSense errors from appearing
   window.addEventListener('unhandledrejection', (event) => {
@@ -54,4 +90,10 @@ export function suppressAdSenseErrors() {
     
     originalWarn.apply(console, args);
   };
+
+  // Clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    clearInterval(intervalId);
+    observer.disconnect();
+  });
 }
