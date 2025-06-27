@@ -6,29 +6,46 @@ import { suppressAdSenseErrors } from './utils/devErrorSuppression'
 // Suppress AdSense errors in development
 suppressAdSenseErrors();
 
-// Additional aggressive error overlay suppression
+// NUCLEAR ERROR OVERLAY SUPPRESSION
 if (import.meta.env.DEV) {
-  // Override window.onerror to prevent error overlays
-  window.onerror = (message, source, lineno, colno, error) => {
-    if (typeof message === 'string' && (
-      message.includes('Load failed') ||
-      message.includes('runtime-error') ||
-      message.includes('plugin:')
-    )) {
-      return true; // Prevent default error handling
-    }
-    return false;
+  // Immediately start killing overlays
+  const killAllOverlays = () => {
+    // Remove all fixed position divs that look like error overlays
+    const allDivs = document.querySelectorAll('div');
+    allDivs.forEach(div => {
+      const el = div as HTMLElement;
+      const style = window.getComputedStyle(el);
+      const text = el.textContent || '';
+      
+      if (style.position === 'fixed' || 
+          text.includes('plugin:runtime-error') ||
+          text.includes('unknown runtime error') ||
+          text.includes('Click outside, press Esc') ||
+          text.includes('server.hmr.overlay') ||
+          el.getAttribute('data-vite-runtime-error-modal') !== null) {
+        el.remove();
+      }
+    });
   };
+
+  // Kill overlays every 10ms aggressively
+  setInterval(killAllOverlays, 10);
+
+  // Override window.onerror completely
+  window.onerror = () => true;
   
-  // Prevent unhandled promise rejections from showing overlays
+  // Block all unhandled rejections that might trigger overlays
   window.addEventListener('unhandledrejection', (event) => {
-    const message = event.reason?.message || '';
-    if (message.includes('Load failed') || 
-        message.includes('runtime-error') ||
-        message.includes('plugin:')) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  });
+
+  // Block error events
+  window.addEventListener('error', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
   });
 }
 

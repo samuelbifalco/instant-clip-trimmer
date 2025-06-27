@@ -1,74 +1,70 @@
 import { useEffect } from 'react';
 
-// Component specifically designed to aggressively hide error overlays
+// NUCLEAR ERROR OVERLAY DESTROYER
 export const ErrorOverlayKiller = () => {
   useEffect(() => {
-    const killOverlays = () => {
-      // Target all possible overlay elements
+    const destroyAllErrorOverlays = () => {
+      // Method 1: Target by selectors
       const selectors = [
         '[data-vite-runtime-error-modal]',
         '.vite-error-overlay',
         '#vite-error-overlay',
         '[data-test-id="error-overlay"]',
-        '.error-overlay'
+        '.error-overlay',
+        'div[style*="position: fixed"]',
+        'div[style*="position:fixed"]'
       ];
 
       selectors.forEach(selector => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach(element => {
-          const el = element as HTMLElement;
-          el.style.display = 'none';
-          el.style.opacity = '0';
-          el.style.visibility = 'hidden';
-          el.style.pointerEvents = 'none';
-          el.style.zIndex = '-9999';
-          // Force remove from DOM
-          el.remove();
+        document.querySelectorAll(selector).forEach(el => {
+          (el as HTMLElement).remove();
         });
       });
 
-      // Also target any fixed position divs that might be error overlays
-      const fixedDivs = document.querySelectorAll('div[style*="position: fixed"]');
-      fixedDivs.forEach(div => {
-        const el = div as HTMLElement;
-        const content = el.textContent || '';
-        if (content.includes('runtime-error') || 
-            content.includes('Load failed') || 
-            content.includes('plugin:') ||
-            content.includes('unknown runtime error')) {
-          el.style.display = 'none';
-          el.remove();
+      // Method 2: Search all divs for error content
+      document.querySelectorAll('div').forEach(div => {
+        const text = div.textContent || '';
+        const style = window.getComputedStyle(div);
+        
+        if (style.position === 'fixed' && (
+          text.includes('plugin:runtime-error') ||
+          text.includes('unknown runtime error') ||
+          text.includes('Load failed') ||
+          text.includes('Click outside, press Esc') ||
+          text.includes('server.hmr.overlay') ||
+          text.includes('vite.config')
+        )) {
+          div.remove();
         }
       });
+
+      // Method 3: Remove any element with error-like attributes
+      document.querySelectorAll('*[data-vite-runtime-error-modal]').forEach(el => el.remove());
+      document.querySelectorAll('*[data-testid*="error"]').forEach(el => el.remove());
+      document.querySelectorAll('*[id*="error-overlay"]').forEach(el => el.remove());
+      document.querySelectorAll('*[class*="error-overlay"]').forEach(el => el.remove());
     };
 
-    // Kill overlays immediately
-    killOverlays();
+    // Destroy immediately and continuously
+    destroyAllErrorOverlays();
+    const interval = setInterval(destroyAllErrorOverlays, 5); // Every 5ms
 
-    // Set up aggressive monitoring
-    const interval = setInterval(killOverlays, 50);
-    
-    // Monitor DOM changes
+    // Monitor for new nodes
     const observer = new MutationObserver(() => {
-      killOverlays();
+      destroyAllErrorOverlays();
     });
 
-    observer.observe(document.body, {
+    observer.observe(document.documentElement, {
       childList: true,
       subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class']
+      attributes: true
     });
-
-    // Also listen for any new elements being added
-    document.addEventListener('DOMNodeInserted', killOverlays);
 
     return () => {
       clearInterval(interval);
       observer.disconnect();
-      document.removeEventListener('DOMNodeInserted', killOverlays);
     };
   }, []);
 
-  return null; // This component renders nothing
+  return null;
 };

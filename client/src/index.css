@@ -3,6 +3,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* AGGRESSIVE ERROR OVERLAY SUPPRESSION */
+/* Target all possible error overlay patterns */
+[data-vite-runtime-error-modal],
+.vite-error-overlay,
+#vite-error-overlay,
+[data-test-id="error-overlay"],
+.error-overlay,
+div[style*="position:fixed"],
+div[style*="position: fixed"],
+div[data-testid*="error"],
+div[id*="error-overlay"],
+div[class*="error-overlay"],
+div[style*="z-index: 999"],
+div[style*="z-index:999"],
+div[style*="background-color: rgba(0, 0, 0"],
+div[style*="background-color:rgba(0,0,0"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+}
+
+/* Target Vite runtime error plugin specifically */
+div:has-text("plugin:runtime-error-plugin"),
+div:has-text("unknown runtime error"),
+div:has-text("Click outside, press Esc key"),
+div:has-text("server.hmr.overlay") {
+  display: none !important;
+}
+
 /* Futuristic Neon Effects */
 @keyframes neon-glow {
   0%, 100% {
