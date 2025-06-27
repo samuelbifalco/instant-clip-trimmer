@@ -2,26 +2,37 @@
 export function suppressAdSenseErrors() {
   if (!import.meta.env.DEV) return;
 
-  // Hide Vite runtime error overlay
+  // Hide Vite runtime error overlay aggressively
   const hideErrorOverlay = () => {
-    const overlay = document.querySelector('[data-vite-runtime-error-modal]');
-    if (overlay) {
-      (overlay as HTMLElement).style.display = 'none';
-    }
-    
-    // Also hide any error overlays with these classes/IDs
+    // Target all possible error overlay selectors
     const selectors = [
+      '[data-vite-runtime-error-modal]',
       '.vite-error-overlay',
       '#vite-error-overlay', 
       '[data-test-id="error-overlay"]',
-      '.error-overlay'
+      '.error-overlay',
+      // Target overlays by common patterns
+      'div[style*="position: fixed"][style*="z-index"]',
+      'div[style*="position: fixed"][style*="top: 0"][style*="left: 0"]'
     ];
     
     selectors.forEach(selector => {
-      const element = document.querySelector(selector);
-      if (element) {
-        (element as HTMLElement).style.display = 'none';
-      }
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        const el = element as HTMLElement;
+        // Check if this looks like an error overlay
+        if (el.textContent?.includes('runtime-error') || 
+            el.textContent?.includes('Load failed') ||
+            el.textContent?.includes('plugin:') ||
+            el.style.position === 'fixed') {
+          el.style.display = 'none';
+          el.style.opacity = '0';
+          el.style.visibility = 'hidden';
+          el.style.pointerEvents = 'none';
+          el.style.zIndex = '-9999';
+          el.remove(); // Completely remove the element
+        }
+      });
     });
   };
 
