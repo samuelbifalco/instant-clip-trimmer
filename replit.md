@@ -4,7 +4,8 @@
 ClipCut is a browser-based video trimming application that allows users to trim and edit videos completely client-side. The application features a futuristic neon design with cyber-themed styling, Google AdSense integration, and production-ready functionality.
 
 ## Recent Changes
-- **2025-06-25**: Disabled Vite runtime error overlay for cleaner development experience
+- **2025-06-27**: Added aggressive error overlay suppression component to eliminate development error modals
+- **2025-06-25**: Disabled Vite runtime error overlay for cleaner development experience  
 - **2025-06-25**: Implemented comprehensive AdSense error suppression system
 - **2025-01-24**: Successfully migrated from Lovable to Replit
 - **2025-01-24**: Fixed video trimming functionality - playhead now respects trim bounds
