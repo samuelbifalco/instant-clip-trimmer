@@ -10,10 +10,15 @@ export const PrivacyBanner = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('privacy_consent');
-    if (!consent) {
-      setShowBanner(true);
-    }
+    // Delay the banner display to prevent DOM insertion conflicts
+    const timer = setTimeout(() => {
+      const consent = localStorage.getItem('privacy_consent');
+      if (!consent) {
+        setShowBanner(true);
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const handleAcceptAll = () => {
@@ -57,7 +62,11 @@ export const PrivacyBanner = () => {
     });
   };
 
+  // Don't render anything if both states are false
   if (!showBanner && !showSettings) return null;
+  
+  // Additional guard to prevent DOM conflicts
+  if (typeof window === 'undefined') return null;
 
   if (showSettings) {
     return (

@@ -45,9 +45,9 @@ export const ErrorOverlayKiller = () => {
       document.querySelectorAll('*[class*="error-overlay"]').forEach(el => el.remove());
     };
 
-    // Destroy immediately and continuously
+    // Destroy immediately and continuously  
     destroyAllErrorOverlays();
-    const interval = setInterval(destroyAllErrorOverlays, 5); // Every 5ms
+    const interval = setInterval(destroyAllErrorOverlays, 50); // Every 50ms to reduce interference
 
     // Monitor for new nodes
     const observer = new MutationObserver(() => {

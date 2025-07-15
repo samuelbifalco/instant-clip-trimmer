@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { VideoUpload } from "@/components/VideoUpload";
 import { VideoEditor } from "@/components/VideoEditor";
 import { Header } from "@/components/Header";
-import { PrivacyBanner } from "@/components/PrivacyBanner";
+// import { PrivacyBanner } from "@/components/PrivacyBanner"; // Temporarily disabled
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { Footer } from "@/components/Footer";
 import { AdSenseAd } from "@/components/AdSenseAd";
@@ -140,7 +140,7 @@ const Index = () => {
       <Footer />
 
       {/* Production-ready components */}
-      <PrivacyBanner />
+      {/* <PrivacyBanner /> Temporarily disabled to fix DOM errors */}
       <FeedbackWidget />
     </div>
   );
