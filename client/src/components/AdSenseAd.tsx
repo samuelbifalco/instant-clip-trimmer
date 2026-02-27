@@ -50,31 +50,17 @@ export const AdSenseModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-500/30 max-w-md w-full">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+      <Card className="w-full max-w-md border border-white/10 bg-slate-800">
         <div className="p-6 text-center">
-          <h3 className="text-xl font-bold text-white mb-4">
-            Support ClipCut
-          </h3>
-          <p className="text-gray-300 mb-6">
-            Thanks for using our free video trimmer! Please view this quick ad to support our service.
+          <h3 className="mb-2 text-xl font-bold text-white">Ready to download</h3>
+          <p className="mb-6 text-slate-400">
+            Your video is ready. Click below to continue.
           </p>
-          
-          {/* Ad placeholder */}
-          <div className="bg-gray-700/50 rounded-lg p-8 mb-4 border border-cyan-500/20">
-            <ins
-              className="adsbygoogle"
-              style={{ display: "block", width: "100%", height: "250px" }}
-              data-ad-client="ca-pub-XXXXXXXXX" // Replace with your AdSense client ID
-              data-ad-slot="XXXXXXXXX" // Replace with your ad slot
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
-          </div>
-
           <button
+            type="button"
             onClick={onClose}
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-2 rounded-lg transition-all duration-200"
+            className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 font-semibold text-white transition-colors hover:from-cyan-600 hover:to-blue-600"
           >
             Continue to Download
           </button>

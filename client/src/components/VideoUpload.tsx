@@ -14,8 +14,7 @@ export const VideoUpload = ({ onVideoSelected }: VideoUploadProps) => {
     <div className="max-w-6xl mx-auto px-4">
       <HeroSection />
       
-      {/* Upload Section */}
-      <div className="grid lg:grid-cols-2 gap-8 mb-20">
+      <div className="mb-16 grid gap-8 lg:mb-20 lg:grid-cols-2">
         <FileUploadCard onVideoSelected={onVideoSelected} />
         <UrlInputCard />
       </div>

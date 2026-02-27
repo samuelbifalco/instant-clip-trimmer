@@ -1,29 +1,27 @@
-
 import { Scissors, Zap, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export const Header = () => {
   return (
-    <header className="cyber-card bg-black/80 border-b border-cyan-500/30 backdrop-blur-sm sticky top-0 z-50 cyber-grid">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="bg-gradient-to-r from-cyan-500 to-purple-600 p-3 rounded-xl shadow-lg neon-border energy-pulse">
-              <Scissors className="h-7 w-7 text-white" />
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-lg">
+      <div className="container mx-auto px-4 py-4 sm:py-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <a href="/" className="flex items-center gap-3 group">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 shadow-lg shadow-cyan-500/20 transition-transform group-hover:scale-105">
+              <Scissors className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-black holographic">ClipCut</h1>
-              <p className="text-sm text-cyan-400 font-medium neon-text">Professional Video Trimmer</p>
+              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">ClipCut</h1>
+              <p className="text-xs font-medium text-cyan-400/90 sm:text-sm">Professional Video Trimmer</p>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <Badge variant="secondary" className="cyber-button bg-green-500/10 text-green-400 border-green-500/20 px-4 py-2 text-sm font-medium">
-              <Zap className="h-4 w-4 mr-2" />
+          </a>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <Badge variant="secondary" className="border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-400">
+              <Zap className="mr-1.5 h-3.5 w-3.5" />
               100% Free
             </Badge>
-            <Badge variant="secondary" className="cyber-button bg-blue-500/10 text-blue-400 border-blue-500/20 px-4 py-2 text-sm font-medium hidden sm:flex">
-              <Shield className="h-4 w-4 mr-2" />
+            <Badge variant="secondary" className="hidden border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-sm font-medium text-blue-400 sm:inline-flex">
+              <Shield className="mr-1.5 h-3.5 w-3.5" />
               Private & Secure
             </Badge>
           </div>

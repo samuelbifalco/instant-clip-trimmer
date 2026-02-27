@@ -65,16 +65,13 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
       canvas.width = videoElement.videoWidth;
       canvas.height = videoElement.videoHeight;
 
-      // For now, just provide the original file with timestamp
-      // In production, you'd use FFmpeg.wasm or similar for actual trimming
-      const trimmedFileName = `clipcut_trimmed_${formatTime(trimStart)}-${formatTime(trimEnd)}_${Date.now()}.${format}`;
-      
+      // Download full file with trim range in filename for reference.
+      // For true trimmed export, integrate FFmpeg.wasm or a backend.
+      const trimmedFileName = `clipcut_${formatTime(trimStart)}-${formatTime(trimEnd)}_${Date.now()}.${format}`;
       toast({
-        title: "Export complete!",
-        description: `Trimmed video ready: ${formatTime(trimEnd - trimStart)} duration`,
+        title: "Download started",
+        description: `Filename includes your trim range (${formatTime(trimStart)}–${formatTime(trimEnd)}).`,
       });
-      
-      // Create download link
       const link = document.createElement('a');
       link.href = URL.createObjectURL(videoFile);
       link.download = trimmedFileName;
@@ -103,17 +100,17 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
   };
 
   return (
-    <Card className="cyber-card bg-gray-800 border-gray-700">
+    <Card className="border border-white/10 bg-slate-800">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold neon-text flex items-center">
-          <FileVideo className="h-5 w-5 mr-2 text-cyan-400" />
+        <CardTitle className="flex items-center text-xl font-bold text-white">
+          <FileVideo className="mr-2 h-5 w-5 text-cyan-400" />
           Export Settings
         </CardTitle>
         <Button
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="cyber-button text-gray-400 hover:text-white"
+          className="text-slate-400 hover:text-white"
         >
           <X className="h-4 w-4" />
         </Button>
@@ -242,17 +239,17 @@ export const ExportPanel = ({ videoFile, trimStart, trimEnd, onClose }: ExportPa
         <Button
           onClick={handleExport}
           disabled={isExporting}
-          className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold py-3"
+          className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 py-3 font-semibold text-white hover:from-emerald-600 hover:to-cyan-600"
         >
           {isExporting ? (
             <>
-              <Gauge className="h-4 w-4 mr-2 animate-spin" />
-              Exporting... ({quality}% quality)
+              <Gauge className="mr-2 h-4 w-4 animate-spin" />
+              Exporting… ({quality}% quality)
             </>
           ) : (
             <>
-              <Download className="h-4 w-4 mr-2" />
-              Export {format.toUpperCase()} ({estimatedFileSize()}MB)
+              <Download className="mr-2 h-4 w-4" />
+              Download {format.toUpperCase()} (trim range in filename)
             </>
           )}
         </Button>

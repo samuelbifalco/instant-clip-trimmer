@@ -127,7 +127,7 @@ export const FileUploadCard = ({ onVideoSelected }: FileUploadCardProps) => {
     if (file) {
       processVideoFile(file);
     }
-  }, []);
+  }, [onVideoSelected]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -150,23 +150,25 @@ export const FileUploadCard = ({ onVideoSelected }: FileUploadCardProps) => {
   };
 
   return (
-    <Card className="cyber-card bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700/50 backdrop-blur-sm overflow-hidden hover:border-gray-600/50 transition-all duration-300">
+    <Card className="overflow-hidden border border-white/10 bg-slate-800/50 backdrop-blur-sm transition-all hover:border-cyan-500/30">
       <CardContent className="p-0">
-        <div className="p-8 border-b border-gray-700/50">
-          <h3 className="text-2xl font-bold flex items-center text-white mb-2">
-            <Upload className="mr-4 h-8 w-8 text-blue-400" />
+        <div className="border-b border-white/10 p-6 sm:p-8">
+          <h3 className="mb-1 flex items-center gap-3 text-xl font-bold text-white sm:text-2xl">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/20">
+              <Upload className="h-5 w-5 text-cyan-400 sm:h-6 sm:w-6" />
+            </span>
             Upload Video File
           </h3>
-          <p className="text-gray-400 text-lg">Drag & drop or click to browse</p>
+          <p className="text-slate-400">Drag & drop or click to browse</p>
         </div>
-        
         <div
           {...getRootProps()}
-          className={`p-12 cursor-pointer transition-all duration-300 ${
-            isProcessing ? 'opacity-50 cursor-not-allowed' :
-            isDragActive || isDragOver
-              ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-400/50 border-2 border-dashed'
-              : 'bg-gray-800/30 border-2 border-dashed border-gray-600/50 hover:border-gray-500/50 hover:bg-gray-700/30'
+          className={`cursor-pointer p-8 transition-all sm:p-12 ${
+            isProcessing
+              ? "cursor-not-allowed opacity-60"
+              : isDragActive || isDragOver
+                ? "border-2 border-dashed border-cyan-400/50 bg-cyan-500/10"
+                : "border-2 border-dashed border-white/10 hover:border-cyan-500/30 hover:bg-white/5"
           }`}
           role="button"
           aria-label="Upload video file"
@@ -174,63 +176,59 @@ export const FileUploadCard = ({ onVideoSelected }: FileUploadCardProps) => {
         >
           <input {...getInputProps()} aria-label="Video file input" />
           
-          <div className="text-center space-y-6">
-            <div className={`mx-auto w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${
-              isProcessing ? 'bg-yellow-500/20 animate-pulse' :
-              isDragActive || isDragOver 
-                ? 'bg-gradient-to-br from-blue-500/30 to-purple-500/30 scale-110' 
-                : 'bg-gradient-to-br from-gray-700/50 to-gray-800/50'
-            }`}>
+          <div className="space-y-6 text-center">
+            <div
+              className={`mx-auto flex h-20 w-20 items-center justify-center rounded-2xl transition-all sm:h-24 sm:w-24 ${
+                isProcessing
+                  ? "animate-pulse bg-amber-500/20"
+                  : isDragActive || isDragOver
+                    ? "scale-105 bg-cyan-500/20"
+                    : "bg-white/5"
+              }`}
+            >
               {isProcessing ? (
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
+                <div className="h-10 w-10 animate-spin rounded-full border-2 border-amber-400 border-t-transparent sm:h-12 sm:w-12" />
               ) : (
-                <Upload className={`h-12 w-12 transition-colors duration-300 ${
-                  isDragActive || isDragOver ? 'text-blue-400' : 'text-gray-300'
-                }`} />
+                <Upload
+                  className={`h-10 w-10 sm:h-12 sm:w-12 ${
+                    isDragActive || isDragOver ? "text-cyan-400" : "text-slate-400"
+                  }`}
+                />
               )}
             </div>
-            
             {isProcessing ? (
-              <div className="space-y-2">
-                <p className="text-yellow-400 font-bold text-xl">Processing video...</p>
-                <p className="text-yellow-300 text-lg">Please wait while we validate your file</p>
+              <div className="space-y-1">
+                <p className="font-semibold text-amber-400">Processing video…</p>
+                <p className="text-sm text-slate-400">Validating your file</p>
               </div>
             ) : isDragActive ? (
-              <div className="space-y-2">
-                <p className="text-blue-400 font-bold text-xl">Drop your video here!</p>
-                <p className="text-blue-300 text-lg">We'll process it instantly</p>
+              <div className="space-y-1">
+                <p className="font-semibold text-cyan-400">Drop your video here</p>
+                <p className="text-sm text-slate-400">We'll open it in the editor</p>
               </div>
             ) : (
               <div className="space-y-4">
-                <p className="text-white font-bold text-xl">
-                  Drag & drop your video here
-                </p>
-                <p className="text-gray-400 text-lg mb-6">
-                  or click to browse files
-                </p>
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-8 py-3 text-lg font-semibold"
-                  disabled={isProcessing}
+                <p className="font-semibold text-white">Drag & drop your video here</p>
+                <p className="text-slate-400">or click to browse</p>
+                <Button
+                  size="lg"
                   type="button"
+                  disabled={isProcessing}
+                  className="bg-gradient-to-r from-cyan-500 to-blue-500 font-semibold text-white hover:from-cyan-600 hover:to-blue-600"
                 >
-                  <FileVideo className="h-5 w-5 mr-2" />
+                  <FileVideo className="mr-2 h-5 w-5" />
                   Choose File
                 </Button>
               </div>
             )}
-            
-            <div className="text-sm text-gray-500 space-y-2 pt-4">
-              <p className="font-medium flex items-center justify-center">
-                <CheckCircle2 className="h-4 w-4 mr-2 text-green-400" />
-                Supports: MP4, AVI, MOV, MKV, WebM, M4V, 3GP
+            <div className="space-y-2 pt-4 text-sm text-slate-500">
+              <p className="flex items-center justify-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                MP4, AVI, MOV, MKV, WebM, M4V, 3GP
               </p>
-              <p className="flex items-center justify-center">
-                <AlertCircle className="h-4 w-4 mr-2 text-blue-400" />
-                Max file size: 500MB
-              </p>
-              <p className="text-xs text-gray-600 mt-4">
-                Your files are processed locally and never uploaded to our servers
+              <p className="flex items-center justify-center gap-2">
+                <AlertCircle className="h-4 w-4 text-cyan-400" />
+                Max 500MB · Processed locally only
               </p>
             </div>
           </div>

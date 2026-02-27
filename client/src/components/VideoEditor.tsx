@@ -42,39 +42,6 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
   const [error, setError] = useState<string | null>(null);
   const [buffering, setBuffering] = useState(false);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement) return;
-      
-      switch (e.code) {
-        case 'Space':
-          e.preventDefault();
-          togglePlayPause();
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          skipBackward();
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          skipForward();
-          break;
-        case 'KeyM':
-          e.preventDefault();
-          toggleMute();
-          break;
-        case 'KeyF':
-          e.preventDefault();
-          toggleFullscreen();
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
-
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -263,6 +230,37 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
     }
   }, [isFullscreen]);
 
+  // Keyboard shortcuts (effect after callbacks so they're defined)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlayPause();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          skipBackward();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          skipForward();
+          break;
+        case 'KeyM':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'KeyF':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [togglePlayPause, skipBackward, skipForward, toggleMute, toggleFullscreen]);
+
   const formatTime = (time: number) => {
     if (!isFinite(time)) return "0:00";
     const minutes = Math.floor(time / 60);
@@ -334,8 +332,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-slate-900/50 to-gray-900/50 rounded-2xl p-6 border border-cyan-500/20 backdrop-blur-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-800/50 p-6 backdrop-blur-sm">
         <Button
           variant="ghost"
           onClick={handleReset}
@@ -359,7 +356,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
       {/* Video Player - Stunning Design */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-xl"></div>
-        <Card className="relative bg-gradient-to-br from-slate-900/90 to-gray-900/90 border-2 border-cyan-500/30 rounded-3xl overflow-hidden backdrop-blur-sm">
+        <Card className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-800/90 backdrop-blur-sm">
           <CardContent className="p-0">
             <div className="relative bg-black rounded-3xl overflow-hidden">
               {isLoading && (
@@ -420,8 +417,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
         </Card>
       </div>
 
-      {/* Timeline and Controls - Beautiful Design */}
-      <Card className="bg-gradient-to-br from-slate-900/80 to-gray-900/80 border-2 border-gray-700/50 backdrop-blur-sm rounded-2xl">
+      <Card className="rounded-2xl border border-white/10 bg-slate-800/80 backdrop-blur-sm">
         <CardContent className="p-8 space-y-8">
           {/* Main Timeline */}
           <div className="space-y-4">
@@ -582,8 +578,7 @@ export const VideoEditor = ({ videoFile, videoUrl, onReset }: VideoEditorProps) 
         </div>
       </div>
 
-      {/* Keyboard Shortcuts - Beautiful Info */}
-      <Card className="bg-gradient-to-r from-slate-900/50 to-gray-900/50 border border-gray-700/50 backdrop-blur-sm rounded-2xl">
+      <Card className="rounded-2xl border border-white/10 bg-slate-800/50 backdrop-blur-sm">
         <CardContent className="p-6">
           <p className="text-center text-gray-300 text-lg">
             Keyboard shortcuts: 

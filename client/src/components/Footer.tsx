@@ -1,56 +1,27 @@
-import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
-    <footer className="mt-16 py-8 border-t border-gray-800/50 bg-gradient-to-r from-gray-900/50 to-black/50 backdrop-blur-sm">
-      <div className="max-w-6xl mx-auto px-4 text-center">
-        <div className="space-y-4">
-          {/* Links */}
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <a 
-              href="/privacy" 
-              className="text-gray-400 hover:text-cyan-400 transition-colors duration-200"
-            >
+    <footer className="mt-20 border-t border-white/10 bg-slate-900/50 py-10 backdrop-blur-sm">
+      <div className="container mx-auto max-w-6xl px-4 text-center">
+        <div className="space-y-6">
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm">
+            <a href="#privacy" className="text-slate-400 transition-colors hover:text-cyan-400">
               Privacy Policy
             </a>
-            <a 
-              href="/terms" 
-              className="text-gray-400 hover:text-cyan-400 transition-colors duration-200"
-            >
+            <a href="#terms" className="text-slate-400 transition-colors hover:text-cyan-400">
               Terms of Service
             </a>
-            <a 
-              href="/support" 
-              className="text-gray-400 hover:text-cyan-400 transition-colors duration-200"
-            >
+            <a href="#support" className="text-slate-400 transition-colors hover:text-cyan-400">
               Support
             </a>
-            <a 
-              href="/contact" 
-              className="text-gray-400 hover:text-cyan-400 transition-colors duration-200"
-            >
-              Contact
-            </a>
+            <Link to="/" className="text-slate-400 transition-colors hover:text-cyan-400">
+              Home
+            </Link>
           </div>
-          
-          {/* Copyright */}
-          <div className="text-gray-500 text-sm">
-            © 2025 ClipCut - a{" "}
-            <a 
-              href="https://redcelventures.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-semibold"
-            >
-              Redcel
-            </a>{" "}
-            brand. All Rights Reserved.
-          </div>
-          
-          {/* Tagline */}
-          <div className="text-xs text-gray-600">
-            Professional video trimming made simple
-          </div>
+          <p className="text-sm text-slate-500">
+            © {new Date().getFullYear()} ClipCut. Professional video trimming made simple.
+          </p>
         </div>
       </div>
     </footer>

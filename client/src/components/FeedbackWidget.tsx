@@ -95,7 +95,7 @@ export const FeedbackWidget = () => {
       <div className="fixed bottom-6 right-6 z-40">
         <Button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-14 h-14 shadow-lg"
+          className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg text-white hover:from-cyan-600 hover:to-blue-600"
           aria-label="Open feedback widget"
         >
           <MessageCircle className="h-6 w-6" />
@@ -106,7 +106,7 @@ export const FeedbackWidget = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-40 w-80">
-      <Card className="bg-gray-900 border-gray-700 shadow-xl">
+      <Card className="border border-white/10 bg-slate-900 shadow-xl">
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-white">Share Your Feedback</h3>
@@ -198,7 +198,7 @@ export const FeedbackWidget = () => {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+            className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600"
           >
             {isSubmitting ? (
               <>

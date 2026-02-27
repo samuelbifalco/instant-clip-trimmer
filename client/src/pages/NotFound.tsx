@@ -1,6 +1,4 @@
-
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Home } from "lucide-react";
@@ -8,70 +6,46 @@ import { ArrowLeft, Home } from "lucide-react";
 const NotFound = () => {
   const location = useLocation();
 
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 text-white relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10 blur-3xl animate-float" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl animate-float" style={{ animationDelay: "2s" }} />
       </div>
-
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 border-gray-700/50 backdrop-blur-sm">
-            <CardContent className="p-12 space-y-8">
-              {/* Large 404 */}
-              <div className="space-y-4">
-                <h1 className="text-8xl md:text-9xl font-black bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-4">
+        <div className="mx-auto max-w-lg text-center">
+          <Card className="border border-white/10 bg-slate-800/80 backdrop-blur-sm">
+            <CardContent className="space-y-8 p-8 sm:p-12">
+              <h1 className="text-7xl font-black sm:text-8xl md:text-9xl">
+                <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                   404
-                </h1>
-                <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
-              </div>
-
-              {/* Error message */}
-              <div className="space-y-4">
-                <h2 className="text-3xl md:text-4xl font-bold text-white">
-                  Page Not Found
-                </h2>
-                <p className="text-xl text-gray-300 leading-relaxed max-w-lg mx-auto">
-                  Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
-                </p>
-              </div>
-
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                </span>
+              </h1>
+              <div className="mx-auto h-1 w-16 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500" />
+              <h2 className="text-2xl font-bold text-white sm:text-3xl">Page not found</h2>
+              <p className="text-slate-400">
+                The page you're looking for doesn't exist or was moved.
+              </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <Button
-                  onClick={() => window.history.back()}
                   variant="outline"
                   size="lg"
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  onClick={() => window.history.back()}
+                  className="border-white/20 text-slate-300 hover:bg-white/10 hover:text-white"
                 >
-                  <ArrowLeft className="h-5 w-5 mr-2" />
-                  Go Back
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Go back
                 </Button>
-                <Button
-                  onClick={() => window.location.href = '/'}
-                  size="lg"
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold"
-                >
-                  <Home className="h-5 w-5 mr-2" />
-                  Return Home
+                <Button asChild size="lg" className="bg-gradient-to-r from-cyan-500 to-purple-500 font-semibold text-white hover:from-cyan-600 hover:to-purple-600">
+                  <Link to="/">
+                    <Home className="mr-2 h-5 w-5" />
+                    Home
+                  </Link>
                 </Button>
               </div>
-
-              {/* Error details */}
-              <div className="pt-8 border-t border-gray-700/50">
-                <p className="text-sm text-gray-500">
-                  Error code: 404 • Requested path: <code className="bg-gray-700/50 px-2 py-1 rounded text-gray-300">{location.pathname}</code>
-                </p>
-              </div>
+              <p className="text-xs text-slate-500">
+                Path: <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-slate-400">{location.pathname}</code>
+              </p>
             </CardContent>
           </Card>
         </div>

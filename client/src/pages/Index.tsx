@@ -3,10 +3,8 @@ import { useState, useEffect } from "react";
 import { VideoUpload } from "@/components/VideoUpload";
 import { VideoEditor } from "@/components/VideoEditor";
 import { Header } from "@/components/Header";
-// import { PrivacyBanner } from "@/components/PrivacyBanner"; // Temporarily disabled
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { Footer } from "@/components/Footer";
-import { AdSenseAd } from "@/components/AdSenseAd";
 import { analytics } from "@/utils/analytics";
 import { initializeHealthMonitoring } from "@/utils/healthCheck";
 import { errorReporter } from "@/utils/errorReporting";
@@ -88,59 +86,25 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 text-white relative overflow-hidden">
-      {/* Enhanced animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-green-500/5 to-blue-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
-        
-        {/* Additional subtle background patterns */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-blue-400/30 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-purple-400/30 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-pink-400/30 rounded-full animate-pulse" style={{ animationDelay: '3s' }}></div>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10 blur-3xl animate-float" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl animate-float" style={{ animationDelay: "2s" }} />
       </div>
-      
       <Header />
-      <main className="container mx-auto px-4 py-12 relative z-10">
+      <main className="container relative z-10 mx-auto px-4 py-8 sm:py-12">
         {!videoFile ? (
-          <>
-            <VideoUpload onVideoSelected={handleVideoSelected} />
-            
-            {/* Ad placement for homepage */}
-            <div className="mt-12 flex justify-center">
-              <AdSenseAd 
-                slot="1234567890"
-                style={{ width: "728px", height: "90px" }}
-                format="horizontal"
-                className="max-w-full"
-              />
-            </div>
-          </>
+          <VideoUpload onVideoSelected={handleVideoSelected} />
         ) : (
-          <>
-            <VideoEditor 
-              videoFile={videoFile} 
-              videoUrl={videoUrl} 
-              onReset={handleReset}
-            />
-            
-            {/* Ad placement for editor view */}
-            <div className="mt-8 flex justify-center">
-              <AdSenseAd 
-                slot="0987654321"
-                style={{ width: "300px", height: "250px" }}
-                format="rectangle"
-              />
-            </div>
-          </>
+          <VideoEditor
+            videoFile={videoFile}
+            videoUrl={videoUrl}
+            onReset={handleReset}
+          />
         )}
       </main>
 
       <Footer />
-
-      {/* Production-ready components */}
-      {/* <PrivacyBanner /> Temporarily disabled to fix DOM errors */}
       <FeedbackWidget />
     </div>
   );
